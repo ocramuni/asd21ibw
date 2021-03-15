@@ -39,3 +39,9 @@ To generate graph in logarithmic scale with _non-distributed_ period and area be
 ```bash
 gnuplot -p smart_naive_log_dist_fill.gnuplot
 ```
+
+## Example graphs
+- `output_dist.pdf` : graph in logarithmic scale with _distributed_ period
+- `output_dist_fill.pdf` : graph in logarithmic scale with _distributed_ period and area between min period and max period filled with color
+- `output.pdf` : graph in logarithmic scale with _non-distributed_ period
+- `output_fill.pdf` : graph in logarithmic scale with _non-distributed_ period and area between min period and max period filled with color
