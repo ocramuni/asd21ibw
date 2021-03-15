@@ -4,18 +4,32 @@
 #include <math.h>
 #include <string.h>
 
-#define MIN_STRING_LENGTH 1000   // minimum size of string to generate
-#define MAX_STRING_LENGTH 500000 // maximum size of string to generate
-#define DIFFERENT_CHARS   3      // number of different character of string
-#define CHART_DATA_POINTS 100    // number of points to plot on chart
-#define ERROR_MAX         0.001  // maximum relative error
+#define MIN_STRING_LENGTH           1000          // minimum size of strings to generate
+#define MAX_STRING_LENGTH           500000        // maximum size of strings to generate
+#define DIFFERENT_CHARS             3             // number of different characters of string
+#define CHART_DATA_POINTS           100           // number of points to plot on chart
+#define ERROR_MAX                   0.001         // maximum relative error
+#define GENERATE_DISTRIBUTED_PERIOD 0             // generate a random string with period distributed on length
+#define FILENAME                    "output.csv"  // name of output file
+#define SAVE_TO_FILE                1             // save to FILENAME
 
 /* Global variables */
 double b;
 long resolution;
 
+/* Data point record */
+struct Records {
+    int length;
+    double tmin_smart;
+    double tmax_smart;
+    double tn_smart;
+    double tmin_naive;
+    double tmax_naive;
+    double tn_naive;
+};
+
 /**
- * Generate a random string with period ~ length
+ * Generate a random string
  * @param length length of random string
  * @return random string
  */
@@ -25,7 +39,13 @@ char *mkrndstr(size_t length) {
     if (length) {
         randomString = malloc(length +1);
         if (randomString) {
-            for (size_t i = 0;i < length;i++) {
+            int l;
+            if (GENERATE_DISTRIBUTED_PERIOD == 1 ) {
+                l = (int) (rand() % length ) + 1;
+            } else {
+                l = length;
+            }
+            for (size_t i = 0;i < l;i++) {
                 /*
                  * Generate a float (randomNumber) that is between 0.0 and 1.0 and is inclusive.
                  * Multiply randomNumber with DIFFERENT_CHARS and take the Floor of the result. This will return an
@@ -43,46 +63,11 @@ char *mkrndstr(size_t length) {
                  */
                 randomString[i] = (char)(shift + 97);
             }
-            /* Add NULL char to the end of string */
-            randomString[length] = '\0';
-        }
-    }
-    return randomString;
-}
-
-/**
- * Generate a random string with period distributed on length
- * @param length length of random string
- * @return random string
- */
-char *mkrndstrdistrib(size_t length) {
-    char *randomString;
-
-    if (length) {
-        randomString = malloc(length +1);
-        if (randomString) {
-            int q;
-            q = (int) (rand() % length ) + 1;
-            for (size_t i = 0;i < q;i++) {
-                /*
-                 * Generate a float (randomNumber) that is between 0.0 and 1.0 and is inclusive.
-                 * Multiply randomNumber with DIFFERENT_CHARS and take the Floor of the result. This will return an
-                 *   integer (shift) that is between 0 and DIFFERENT_CHARS and is inclusive.
-                 */
-                float randomNumber;
-                randomNumber = ((float) rand() / (float) (RAND_MAX)) * DIFFERENT_CHARS;
-                double shift;
-                shift = floorf(randomNumber);
-                /*
-                 * Add the shift integer to 97, which is the ASCII value of the character a. This will
-                 *   return an inclusive value between 97 and 97 + DIFFERENT_CHARS, which will be the ASCII value of some character.
-                 * Converting that value to a character will return a character.
-                 * Repeat the above step as required to obtain a randomly generated string.
-                 */
-                randomString[i] = (char)(shift + 97);
-            }
-            for (size_t j = q;j < length;j++) {
-                randomString[j] = randomString[ (j-1) % q + 1];
+            if (GENERATE_DISTRIBUTED_PERIOD == 1 ) {
+                /* Pad randomString with period */
+                for (size_t j = l;j < length;j++) {
+                    randomString[j] = randomString[ (j-1) % l + 1];
+                }
             }
             /* Add NULL char to the end of string */
             randomString[length] = '\0';
@@ -197,65 +182,60 @@ int PeriodNaive(char *s, int n) {
 }
 
 /**
- * Search longest border (with smart algo) of a string of length n and return average time
+ * Search longest border of a string of length n and return average time
  * @param n string length
- * @return average time
+ * @param record data_point record
+ * @param use_smart use smart or naive algo
  */
-double get_average_time_smart(int n) {
-    clock_t start, end;
+void get_period_time(int n, struct Records *record, int use_smart) {
+    clock_t start, end, w_start;
 
     start = clock();
     /* Do the work. */
     size_t k = 0;
+    double max_time = 0;
+    double min_time = start;
     do {
+        /* Reset start time on every loop */
+        w_start = clock();
         /* Generate random string */
         char *mystring;
-        mystring = mkrndstrdistrib(n);
+        mystring = mkrndstr(n);
         //printf("Mystring string: %s\n", mystrings);
         /* Get period of string */
         int p;
-        p = PeriodSmart(mystring, n);
-        //printf("Period of string length %d: %d\n", n, p);
+        if (use_smart == 1) {
+            p = PeriodSmart(mystring, n);
+        } else {
+            p = PeriodNaive(mystring, n);
+        }
+        // TODO save list of period length
+        // printf("Period of string length %d: %d\n", n, p);
         free(mystring);
         end = clock();
+        /* Save longest period search time */
+        if ((double) (end - w_start) > max_time) {
+            max_time = (double) (end - w_start);
+        };
+        /* Save shortest period search time */
+        if ((double) (end - w_start) < min_time) {
+            min_time = (double) (end - w_start);
+        };
         k++;
-    } while ((double)(end - start) < ((double)resolution /ERROR_MAX + (double)resolution));
+    } while ((double)(end - start) < ((double) resolution / ERROR_MAX + (double) resolution));
     /* Average time */
     double tn;
     tn = (double)(end - start) / (double) k;
-    return (tn / CLOCKS_PER_SEC);
+    if (use_smart == 1) {
+        record->tn_smart = (tn / CLOCKS_PER_SEC);
+        record->tmin_smart = (min_time / CLOCKS_PER_SEC);
+        record->tmax_smart = (max_time / CLOCKS_PER_SEC);
+    } else {
+        record->tn_naive = (tn / CLOCKS_PER_SEC);
+        record->tmin_naive = (min_time / CLOCKS_PER_SEC);
+        record->tmax_naive = (max_time / CLOCKS_PER_SEC);
+    }
 }
-
-/**
- * Search longest border (with naive algo) of a string of length n and return average time
- * @param n string length
- * @return average time
- */
-double get_average_time_naive(int n) {
-    clock_t start, end;
-
-    start = clock();
-    /* Do the work. */
-    size_t k = 0;
-    do {
-        /* Generate random string */
-        char *mystring;
-        mystring = mkrndstrdistrib(n);
-        //printf("Mystring string: %s\n", mystrings);
-        /* Get period of string */
-        int p;
-        p = PeriodNaive(mystring, n);
-        //printf("Period of string length %d: %d\n", n, p);
-        free(mystring);
-        end = clock();
-        k++;
-    } while ((double)(end - start) < ((double)resolution /ERROR_MAX + (double)resolution));
-    /* Average time */
-    double tn;
-    tn = (double)(end - start) / (double) k;
-    return (tn / CLOCKS_PER_SEC);
-}
-
 
 int main (void) {
     /* Initializes random number generator */
@@ -271,17 +251,55 @@ int main (void) {
     resolution = getResolution();
     //printf("Resolution: %ld\n", resolution);
 
+    struct Records data_points[CHART_DATA_POINTS];
+
+    FILE *outfile;
+    if (SAVE_TO_FILE == 1) {
+        // open file for writing
+        outfile = fopen (FILENAME, "w");
+        if (outfile == NULL)
+        {
+            fprintf(stderr, "\nError open file\n");
+            exit (1);
+        }
+        // Write csv column labels
+        fprintf(outfile, "length,tmin_smart,tn_smart,tmax_smart,tmin_naive,tn_naive,tmax_naive\n");
+    }
+
     /* Do the work. */
     for (size_t i = 0; i < CHART_DATA_POINTS; i++) {
         /* Get string length */
         int length;
         length = getStringLength(i);
-        /* Search longest period on string of length n and return average time */
-        double average_time_smart;
-        double average_time_naive;
-        average_time_smart = get_average_time_smart(length);
-        average_time_naive = get_average_time_naive(length);
-        printf("String length: %d - Average time smart: %f\n", length, average_time_smart);
-        printf("String length: %d - Average time naive: %f\n", length, average_time_naive);
+        data_points[i].length = length;
+        /* Search longest period on string of length n with smart algo */
+        get_period_time(length, &data_points[i], 1);
+        /* Search longest period on string of length n with naive algo */
+        get_period_time(length, &data_points[i], 0);
+        /* string length,time min smart,time average smart,time max smart,time min naive,time average naive,time max naive */
+        if (SAVE_TO_FILE == 1) {
+            fprintf(outfile,  "%d,%f,%f,%f,%f,%f,%f\n",
+                    data_points[i].length,
+                    data_points[i].tmin_smart,
+                    data_points[i].tn_smart,
+                    data_points[i].tmax_smart,
+                    data_points[i].tmin_naive,
+                    data_points[i].tn_naive,
+                    data_points[i].tmax_naive);
+        } else {
+            printf("%d,%f,%f,%f,%f,%f,%f\n",
+                   data_points[i].length,
+                   data_points[i].tmin_smart,
+                   data_points[i].tn_smart,
+                   data_points[i].tmax_smart,
+                   data_points[i].tmin_naive,
+                   data_points[i].tn_naive,
+                   data_points[i].tmax_naive);
+        }
+    }
+
+    if (SAVE_TO_FILE == 1) {
+        // Close file
+        fclose(outfile);
     }
 }
