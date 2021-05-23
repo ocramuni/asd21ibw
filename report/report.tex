@@ -1,48 +1,41 @@
-\documentclass[a4paper]{article}
+\documentclass[a4paper,titlepage]{article}
 
 \usepackage{graphicx}
 \usepackage[italian]{babel}
 \graphicspath{ {images/} }
 
-\title{Relazione per Progetto Laboratorio di ASD \\
-         \large Prima Parte}
+\title{Relazione del Progetto Laboratorio di ASD\\[0.5em]
+\large Prima Parte}
 \date{Maggio 2021}
 \author{
-Marco Giunta giunta.marco@spes.uniud.it
-\and
-Samuele Anzolin anzolin.samuele@spes.uniud.it
-\and
-Federico Casani casani.federico@spes.uniud.it
-\and
-Gianluca Giuseppe Maria De Nardi 142733@spes.uniud.it 
+M. Giunta\thanks{Marco Giunta 147852 giunta.marco@spes.uniud.it} \and
+S. Anzolin\thanks{Samuele Anzolin 111111 anzolin.samuele@spes.uniud.it} \and
+F. Casani\thanks{Federico Casani 111111 casani.federico@spes.uniud.it} \and
+G. De Nardi \thanks{Gianluca Giuseppe Maria De Nardi 142733 142733@spes.uniud.it}
 }
 
 \begin{document}
-% Generate first page with no page numbers
-\pagenumbering{gobble}
+% Generate title page
 \maketitle
-\newpage
 
+% Generate TOC
 \pagenumbering{arabic}
 \tableofcontents
 \newpage
 
 \section{Introduzione}
-In questo progetto abbiamo implementato e analizzato due algoritmi per il calcolo
-del periodo frazionario minimo di una stringa. I due algoritmi implementati sono:
+In questo progetto abbiamo implementato e analizzato due algoritmi per il calcolo del periodo frazionario minimo di una stringa.
+I due algoritmi implementati sono:
 
 \begin{itemize}
   \item PeriodNaive
   \item PeriodSmart
 \end{itemize}
 
-l linguaggio di programmazione che abbiamo utilizzato per questo progetto è C,
-in quanto è un linguaggio veloce ed efficiente e qualitativamente migliore per un’analisi temporale.
-
+Il linguaggio di programmazione che abbiamo utilizzato per questo progetto è C, in quanto è un linguaggio veloce ed efficiente e qualitativamente migliore per un’analisi temporale.
 
 \section{Ipotesi}
-Essendo periodNaive un algoritmo con complessità asintotica nel caso peggiore
-pari a O(\(n^2\)) mentre il secondo raggiunge una complessità lineare, possiamo dedurre
+Essendo periodNaive un algoritmo con complessità asintotica nel caso peggiore pari a O(\(n^2\)) mentre il secondo raggiunge una complessità lineare, possiamo dedurre
 che periodSmart sarà notevolmente migliore nel caso peggiore.
 
 \section{Implementazione}
@@ -55,9 +48,10 @@ Utilizziamo quindi un ciclo che scandisca l’intera stringa di input e internam
 
 \subsection{periodSmart}
 
-Questo algoritmo invece, sfrutta il concetto di bordo, cioè una qualsiasi stringa che sia, prefisso e suffisso proprio della stringa principale. Come osservato quindi p è un periodo frazionario di s solo se \(p = |s| - r\) dove r è la lunghezza di un bordo di s, quindi il problema si riduce al solo calcolo del bordo massimo della stringa s.
+Questo algoritmo invece, sfrutta il concetto di bordo, cioè una qualsiasi stringa che sia, prefisso e suffisso proprio della stringa principale.
+Come osservato quindi p è un periodo frazionario di s solo se \(p = |s| - r\) dove r è la lunghezza di un bordo di s, quindi il problema si riduce al solo calcolo del bordo massimo della stringa s.
 
-Andiamo quindi ad analizzare l’implementazione vera e propria del algoritmo in questione, avremo quindi
+Andiamo quindi ad analizzare l’implementazione vera e propria del algoritmo in questione, avremo quindi:
 
 \subsection{Algoritmo per il calcolo dei tempi medi}
 
@@ -66,6 +60,15 @@ Il calcolo dei tempi medi
 \section{Analisi dei dati ottenuti}
 
 \subsection{Grafico dei tempi di periodNaive}
+
+\begin{figure}[h]
+                \centering
+                \includegraphics[width=\columnwidth]{test}
+                \caption{Test}
+                \label{fig:graph2}
+\end{figure}
+
+
 
 Allegare naive.pdf trasformato in immagine (ingrandire le scritte)
 
@@ -95,5 +98,6 @@ Allegare naivedist.pdf trasformato in immagine
 
 \section{Conclusioni}
 
-Come osservato dai grafici, abbiamo sicuramente costatato che tra i due algoritmi c’è una notevole differenza in termini di tempo. L’argoritmo smart impiega molto meno tempo dell'algoritmo rivale ed è quindi più consigliato il suo utilizzo.
+Come osservato dai grafici, abbiamo sicuramente costatato che tra i due algoritmi c’è una notevole differenza in termini di tempo.
+L’argoritmo smart impiega molto meno tempo dell'algoritmo rivale ed è quindi più consigliato il suo utilizzo.
 \end{document}
