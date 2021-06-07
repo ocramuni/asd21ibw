@@ -1,0 +1,14 @@
+\babel@toc {italian}{}
+\babel@toc {italian}{}
+\contentsline {section}{\numberline {1}Introduzione}{2}{}%
+\contentsline {section}{\numberline {2}Ipotesi}{2}{}%
+\contentsline {section}{\numberline {3}Implementazione}{3}{}%
+\contentsline {subsection}{\numberline {3.1}periodNaive}{3}{}%
+\contentsline {subsection}{\numberline {3.2}periodSmart}{3}{}%
+\contentsline {subsection}{\numberline {3.3}Algoritmo per il calcolo dei tempi medi}{3}{}%
+\contentsline {section}{\numberline {4}Analisi dei dati ottenuti}{4}{}%
+\contentsline {subsection}{\numberline {4.1}Grafico dei tempi di periodNaive}{4}{}%
+\contentsline {subsection}{\numberline {4.2}Grafico dei tempi di periodSmart}{5}{}%
+\contentsline {subsection}{\numberline {4.3}Analisi logaritmica dei due algoritmi}{6}{}%
+\contentsline {subsection}{\numberline {4.4}Analisi comparativa tra i due algoritmi}{8}{}%
+\contentsline {section}{\numberline {5}Conclusioni}{9}{}%
