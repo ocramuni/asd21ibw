@@ -41,26 +41,20 @@ To generate graphs of naive algorithm, run:
 - `gnuplot -p naive_log.gnuplot` : graph in logarithmic scale with _non-distributed_ period
 - `gnuplot -p naive_log_dist.gnuplot` : graph in logarithmic scale with _distributed_ period
 
-## Example graphs
+## To generate report images
+To generate all pdf files needed to compile report, move to `./graphs` and run:
 
-Comparative graphs:
+```bash
+./generate_figures.sh
+```
 
-- `graphs/examples/smart_naive.pdf` : graph in linear scale with _non-distributed_ period
-- `graphs/examples/smart_naive_dist.pdf` : graph in linear scale with _distributed_ period
-- `graphs/examples/smart_naive_log.pdf` : graph in logarithmic scale with _non-distributed_ period
-- `graphs/examples/smart_naive_log_dist.pdf` : graph in logarithmic scale with _distributed_ period
+then copy all pdf files to `./report/images`.
 
+# Report
+## Compile report:
 
-PeriodSmart algorithm graphs:
+Generate graphs and copy them to `./report/images`. To compile report, move to `./report` and run:
 
-- `graphs/examples/smart.pdf` : graph in linear scale with _non-distributed_ period
-- `graphs/examples/smart_dist.pdf` : graph in linear scale with _distributed_ period
-- `graphs/examples/smart_log.pdf` : graph in logarithmic scale with _non-distributed_ period
-- `graphs/examples/smart_log_dist.pdf` : graph in logarithmic scale with _distributed_ period
-
-PeriodNaive algorithm graphs:
-
-- `graphs/examples/naive.pdf` : graph in linear scale with _non-distributed_ period
-- `graphs/examples/naive_dist.pdf` : graph in linear scale with _distributed_ period
-- `graphs/examples/naive_log.pdf` : graph in logarithmic scale with _non-distributed_ period
-- `graphs/examples/naive_log_dist.pdf` : graph in logarithmic scale with _distributed_ period
+```bash
+pdflatex report.tex
+```
