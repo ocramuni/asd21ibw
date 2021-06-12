@@ -29,7 +29,7 @@ int searchLongestBorderSmart(const char *s, int n) {
 int main () {
     char s[MAX_LINE_SIZE];
     scanf("%[^\n]s", s);
-    int n = strlen(s);
+    int n = (int) strlen(s);
 
     // border
     int r = searchLongestBorderSmart(s, n);
