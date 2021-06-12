@@ -33,7 +33,7 @@ struct Records {
  * @param length length of random string
  * @return random string
  */
-char *mkrndstr(size_t length) {
+char *mkrndstr(ssize_t length) {
     char *randomString;
 
     if (length) {
@@ -45,7 +45,7 @@ char *mkrndstr(size_t length) {
             } else {
                 l = length;
             }
-            for (size_t i = 0;i < l;i++) {
+            for (ssize_t i = 0;i < l;i++) {
                 /*
                  * Generate a float (randomNumber) that is between 0.0 and 1.0 and is inclusive.
                  * Multiply randomNumber with DIFFERENT_CHARS and take the Floor of the result. This will return an
@@ -65,7 +65,7 @@ char *mkrndstr(size_t length) {
             }
             if (GENERATE_DISTRIBUTED_PERIOD == 1 ) {
                 /* Pad randomString with period */
-                for (size_t j = l;j < length;j++) {
+                for (ssize_t j = l;j < length;j++) {
                     randomString[j] = randomString[ (j-1) % l + 1];
                 }
             }
@@ -81,7 +81,7 @@ char *mkrndstr(size_t length) {
  * @param dp number for data point
  * @return string length
  */
-int getStringLength(size_t dp) {
+int getStringLength(ssize_t dp) {
     int length;
     length = MIN_STRING_LENGTH * (pow (b, (double) dp));
     return length;
@@ -99,7 +99,7 @@ int searchLongestBorder(const char *s, int n) {
     r[0] = 0;  /* border length of first character is always 0 */
 
     int currentBorderLength = 0;
-    for (size_t i = 1; i < n; ++i) {
+    for (ssize_t i = 1; i < n; ++i) {
         while (currentBorderLength > 0 && s[currentBorderLength] != s[i])
             currentBorderLength = r[currentBorderLength - 1];
         if (s[currentBorderLength] == s[i])
@@ -192,7 +192,7 @@ void get_period_time(int n, struct Records *record, int use_smart) {
 
     start = clock();
     /* Do the work. */
-    size_t k = 0;
+    ssize_t k = 0;
     double max_time = 0;
     double min_time = start;
     do {
@@ -267,7 +267,7 @@ int main (void) {
     }
 
     /* Do the work. */
-    for (size_t i = 0; i < CHART_DATA_POINTS; i++) {
+    for (ssize_t i = 0; i < CHART_DATA_POINTS; i++) {
         /* Get string length */
         int length;
         length = getStringLength(i);
